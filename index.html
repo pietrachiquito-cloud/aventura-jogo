@@ -1,1 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Jornada do Explorador</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #1a261c;
+      color: #f0f4f1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
 
+    .container {
+      background-color: #2d3e30;
+      border: 2px solid #4a6b4e;
+      border-radius: 12px;
+      padding: 24px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      text-align: center;
+    }
+
+    h1 {
+      color: #79c982;
+      margin-top: 0;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      background-color: #1f2c21;
+      padding: 10px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .story-box {
+      font-size: 1.1em;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      min-height: 80px;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    button {
+      background-color: #3e5c41;
+      color: #fff;
+      border: 1px solid #5a855f;
+      padding: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #527a56;
+    }
+
+    button:disabled {
+      background-color: #2a3a2c;
+      cursor: not-allowed;
+      border-color: #2a3a2c;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>A Jornada do Explorador</h1>
+  
+  <div class="stats">
+    <span>Vida: <span id="health">❤️ 3</span></span>
+    <span>Fase: <span id="stage">1/4</span></span>
+  </div>
+
+  <div class="story-box" id="story">
+    Você está na entrada de uma floresta antiga. Para abrir o grande portão de pedra, você precisa responder ao enigma do Guardião.
+  </div>
+
+  <div class="options-grid" id="options">
+    <!-- As opções aparecem via JavaScript -->
+  </div>
+</div>
+
+<script>
+  const stages = [
+    {
+      story: "🚪 **Fase 1:** O Guardião de Pedra bloqueia o caminho e pergunta: *'Qual é o maior planeta do Sistema Solar?'*",
+      options: [
+        { text: "Marte", correct: false },
+        { text: "Júpiter", correct: true },
+        { text: "Saturno", correct: false }
+      ]
+    },
+    {
+      story: "🌊 **Fase 2:** Você passou pelo portão e chegou a um rio turbulento. O espírito da ponte pergunta: *'Qual o elemento químico representado pelo símbolo H?'*",
+      options: [
+        { text: "Hélio", correct: false },
+        { text: "Hidrogênio", correct: true },
+        { text: "Ferro", correct: false }
+      ]
+    },
+    {
+      story: "🏰 **Fase 3:** No alto da montanha, um dragão sábio exige saber: *'Em que ano o homem pisou na Lua pela primeira vez?'*",
+      options: [
+        { text: "1969", correct: true },
+        { text: "1975", correct: false },
+        { text: "1958", correct: false }
+      ]
+    },
+    {
+      story: "💎 **Fase 4:** Diante do tesouro final, o pedestal sagrado pergunta: *'Qual é o animal terrestre mais rápido do mundo?'*",
+      options: [
+        { text: "Guepardo (Lobo-cinzento/Guepardo)", correct: true },
+        { text: "Leão", correct: false },
+        { text: "Falcão-peregrino", correct: false }
+      ]
+    }
+  ];
+
+  let currentStage = 0;
+  let health = 3;
+
+  const storyEl = document.getElementById('story');
+  const optionsEl = document.getElementById('options');
+  const healthEl = document.getElementById('health');
+  const stageEl = document.getElementById('stage');
+
+  function renderStage() {
+    if (health <= 0) {
+      storyEl.innerHTML = "💥 **Fim de Jogo!** Suas vidas acabaram na floresta misteriosa.";
+      optionsEl.innerHTML = `<button onclick="restartGame()">Tentar Novamente</button>`;
+      return;
+    }
+
+    if (currentStage >= stages.length) {
+      storyEl.innerHTML = "🏆 **Parabéns!** Você respondeu a todas as perguntas, superou os desafios e encontrou o Tesouro Perdido!";
+      optionsEl.innerHTML = `<button onclick="restartGame()">Jogar Novamente</button>`;
+      return;
+    }
+
+    const stage = stages[currentStage];
+    storyEl.innerHTML = stage.story;
+    healthEl.innerText = "❤️ ".repeat(health);
+    stageEl.innerText = `${currentStage + 1}/${stages.length}`;
+
+    optionsEl.innerHTML = '';
+    stage.options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.innerText = opt.text;
+      btn.onclick = () => checkAnswer(opt.correct);
+      optionsEl.appendChild(btn);
+    });
+  }
+
+  function checkAnswer(isCorrect) {
+    if (isCorrect) {
+      alert("Resposta correta! Você avança na aventura.");
+      currentStage++;
+    } else {
+      health--;
+      alert("Resposta errada! Você sofreu danos.");
+    }
+    renderStage();
+  }
+
+  function restartGame() {
+    currentStage = 0;
+    health = 3;
+    renderStage();
+  }
+
+  // Inicializa o jogo
+  renderStage();
+</script>
+
+</body>
+</html>
